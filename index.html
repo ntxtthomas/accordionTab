@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="Accordion and Tab">
+	<title>Accordion and Tab in jQuery UI</title>
+	<script src="js/jquery-2.1.4.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/start/jquery-ui.css">
+	<script src="http://maps.googleapis.com/maps/api/js"></script>
+	<script type="text/javascript">
+		$(document).ready(function()	{
+			
+// .tabs:mouseover widget
+			$('#tabs').tabs({
+				event: "mouseover"
+			});
+// end of .tabs:mouseover widget
+
+// progressBar:downloadDialog widget		
+			var progressTimer,
+      		progressbar = $( "#progressbar" ),
+      		progressLabel = $( ".progress-label" ),
+      		dialogButtons = [{
+        		text: "Cancel Download",
+        		click: closeDownload
+      		}],
+      		dialog = $( "#dialog" ).dialog({
+		        autoOpen: false,
+		        closeOnEscape: false,
+		        resizable: false,
+		        buttons: dialogButtons,
+        	open: function() {
+          		progressTimer = setTimeout( progress, 2000 );
+        	},
+        	beforeClose: function() {
+          		downloadButton.button( "option", {
+            		disabled: false,
+            		label: "Start Download"
+          		});
+        	}
+      		}),
+      			downloadButton = $( "#downloadButton" )
+        		.button()
+        		.on( "click", function() {
+          			$( this ).button( "option", {
+            		disabled: true,
+            		label: "Downloading..."
+          		});
+          		dialog.dialog( "open" );
+        		});
+ 			    progressbar.progressbar({
+      				value: false,
+      					change: function() {
+        		progressLabel.text( "Current Progress: " + progressbar.progressbar( "value" ) + "%" );
+      			},
+      			complete: function() {
+        			progressLabel.text( "Complete!" );
+        			dialog.dialog( "option", "buttons", [{
+          				text: "Close",
+          				click: closeDownload
+        			}]);
+		        		$(".ui-dialog button").last().focus();
+		      	}
+    		});
+ 
+    function progress() {
+      var val = progressbar.progressbar( "value" ) || 0;
+      progressbar.progressbar( "value", val + Math.floor( Math.random() * 3 ) );
+      if ( val <= 99 ) {
+        progressTimer = setTimeout( progress, 50 );
+      }
+    }
+ 
+    function closeDownload() {
+      clearTimeout( progressTimer );
+      dialog
+        .dialog( "option", "buttons", dialogButtons )
+        .dialog( "close" );
+      progressbar.progressbar( "value", false );
+      progressLabel
+        .text( "Starting download..." );
+      downloadButton.focus();
+    }
+// progressBar:downloadDialog widget    
+
+// .datePicker:icon widget
+	    $( "#datepicker" ).datepicker({
+	      showOn: "button",
+	      buttonImage: "images/calendar.gif",
+	      buttonImageOnly: true,
+	      buttonText: "Select date"
+	    });
+// end of .datePicker:icon widget
+	
+// .spinner:map widget
+
+	function latlong() {
+	      return new google.maps.LatLng( $("#lat").val(), $("#lng").val() );
+	    }
+	    function position() {
+	      map.setCenter( latlong() );
+	    }
+	    $( "#lat, #lng" ).spinner({
+	      step: .001,
+	      change: position,
+	      stop: position
+	    });
+	 
+	    var map = new google.maps.Map( $("#map")[0], {
+	      zoom: 9,
+	      center: latlong(),
+	      mapTypeId: google.maps.MapTypeId.ROADMAP
+	    });
+// end of spinner:map widget
+
+// accordian:default
+	$(function() {
+    	$( "#accordion" ).accordion({ heightStyle: "content", 
+    								icons: { 'header': 'ui-icon-circle-plus', 'headerSelected': 'ui-icon-minus' }, collapsible: true, active: false });
+  	});
+// end of accordian:default 
+	});
+	
+	</script>
+	<style>
+		* {margin: 0px; padding: 0px;}
+		
+		#container {
+			width: 900px;
+			margin: 15px auto;
+			padding: 5px;
+			border: 1px solid black;
+		}
+		h3 {
+			margin-top: 20px;
+		}
+		p {
+			margin-bottom: 20px;
+		}
+		#progressbar {
+    		margin-top: 20px;
+  		}
+  		.progress-label {
+		    font-weight: bold;
+		    text-shadow: 1px 1px 0 #fff;
+  		}
+  		.ui-dialog-titlebar-close {
+   			display: none;
+  		}
+		#map {
+		    width:500px;
+		    height:500px;
+		}
+		.accList {
+			margin: 15px;
+			margin-left: 50px;
+		}
+ 	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="tabs">
+			<ul>
+			    <li><a href="#tab1">ProgressBar</a></li>
+			    <li><a href="#tab2">DatePicker</a></li>
+			    <li><a href="#tab3">Spinner</a></li>
+			    <li><a href="#tab4">Accordion</a></li>
+			</ul>
+			
+			<div id="tab1">
+				<h3>ProgessBar: Download</h3>
+				<p>Yr craft beer aesthetic readymade. Man bun cred pickled, food truck ramps chartreuse hammock artisan celiac bicycle rights chia mlkshk freegan church-key. Fap offal distillery everyday carry, blog sustainable cray.</p>
+				<div id="dialog" title="File Download">
+				  <div class="progress-label">Starting download...</div>
+				  <div id="progressbar"></div>
+				</div>
+				<button id="downloadButton">Start Download</button>
+			</div>
+		
+			<div id="tab2">
+				<h3>Date Picker: Icon</h3>
+				<p>Morbi interdizzle. Dizzle potenti. Maecenizzle nisl. Fo shizzle mah nizzle fo rizzle, mah home g-dizzle elizzle crunk, ullamcorpizzle quis, ullamcorpizzle sizzle, scelerisque my shizz, leo.</p>
+				<br>
+				<p class="date">Date: <input type="text" id="datepicker"></p>
+			</div>
+	
+			<div id="tab3">
+				<h3>Spinner: Map</h3>
+				<p>The boys' eyes ranged along from the teeth and from hand to hand, down through the pebbles and sand-grains to Edwin's fingers. And back again they ranged along the ascending series in the effort to grasp such inconceivable numbers.</p>
+				<label for="lat">Latitude</label>
+				<input id="lat" name="lat" value="37.757190">
+				<br>
+				<label for="lng">Longitude</label>
+				<input id="lng" name="lng" value="-122.388543">
+				 
+				<div id="map"></div>
+			</div>
+		
+			<div id="tab4">
+				<h3>Accordion: Default</h3>
+				<p>Bacon ipsum dolor amet ham dolor filet mignon jerky shoulder doner. Beef ribs excepteur voluptate, ut pastrami porchetta ex turkey alcatra nulla shoulder. Ex sed laboris ipsum venison. Ball tip tempor bacon elit qui boudin picanha ham shank laborum et.</p>
+				
+				<div id="mainAcc">
+					<div id="accordion">
+						    <h3><a href="#">Section 1</a></h3>
+						    <div>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam</div>
+						   
+						    <h3><a href="#">Section 2</a></h3>
+						    <div>Sed non urna. Donec et ante. Phasellus eu ligula</div>
+						    
+						    <h3><a href="#">Section 3</a></h3>
+						    <div>Nam enim risus, molestie et, porta ac, aliquam ac, risus. 
+						      <ul class="accList">
+						        <li>List item one</li>
+						        <li>List item two</li>
+						        <li>List item three</li>
+						      </ul>
+						    </div>
+						   
+						    <h3><a href="#">Section 4</a></h3>
+						    <div><p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+						    </div>						    
+					</div> <!-- end of #accordion div -->
+				</div> <!-- end of #mainAcc div -->
+			</div> <!-- end #tab4 div -->
+		</div> <!-- end #tabs div -->
+	</div> <!-- end of #container div -->
+
+</body>
+</html>
